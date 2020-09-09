@@ -4,7 +4,9 @@ import { MdSearch } from 'react-icons/md';
 import { GithubContext } from '../context/context';
 const Search = () => {
   const [user, setUser] = React.useState(''); // Hook
-  const { requests, error } = React.useContext(GithubContext); // Hook al Main Context
+  const { requests, error, searchGithubUser, isLoading } = React.useContext(
+    GithubContext
+  ); // Hook al Main Context
   // console.log(requests);
   // Get stuff from Global Context:
   const handleSubmit = (e) => {
@@ -12,6 +14,7 @@ const Search = () => {
     // console.log(user); // Vemos que Tomamos el Value OnChange!
     if (user) {
       //Logic
+      searchGithubUser(user);
     }
   };
   return (
@@ -31,7 +34,9 @@ const Search = () => {
               value={user}
               onChange={(e) => setUser(e.target.value)}
             />
-            {requests > 0 && <button type='submit'>Search</button>}
+            {requests > 0 && !isLoading && (
+              <button type='submit'>Search</button>
+            )}
           </div>
         </form>
         <h3>Requests: {requests} /60</h3>

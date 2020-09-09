@@ -18,9 +18,39 @@ const GithubProvider = ({ children }) => {
   // **** API *****
   // Request Loading:
   const [requests, setRequests] = useState(0);
-  const [loading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState({ show: false, msg: '' });
+  // Search User
+  const searchGithubUser = async (user) => {
+    // console.log(user); // Vemos que funciona
+    // Toggle Error --> Remover el Error ya mostrado (ya pasamos defaults)
+    toggleError();
+    // Loading(true)
+    setIsLoading(true);
+    // Response
+    const response = await axios(`${rootUrl}/users/${user}`).catch((err) =>
+      console.log(err)
+    );
+    // console.log(response); // Vemos la DATA solicitada
+    if (response) {
+      setGithubUser(response.data);
+      // Repos :  https://api.github.com/users/john-smilga/repos?per_page=100
+      // Followers: https://api.github.com/users/john-smilga/followers
+      const { login, followers_url } = response.data;
+      axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) =>
+        setRepos(response.data)
+      );
+      axios(`${followers_url}?per_page=100`).then((response) =>
+        setFollowers(response.data)
+      );
+    } else {
+      toggleError(true, 'No such User');
+    }
 
+    // Volver al inicio:
+    checkRequests(); // Mostrar las Req
+    setIsLoading(false); // Loading False
+  };
   // -----------> Check Rate (API) ---> AXIOS: ayudará a ingersar a los  URL
   const checkRequests = () => {
     axios(`${rootUrl}/rate_limit`)
@@ -48,7 +78,15 @@ const GithubProvider = ({ children }) => {
   useEffect(checkRequests, []); // Cargará una sola vez
   return (
     <GithubContext.Provider
-      value={{ githubUser, repos, followers, requests, error }}
+      value={{
+        githubUser,
+        repos,
+        followers,
+        requests,
+        error,
+        searchGithubUser,
+        isLoading,
+      }}
     >
       {children}
     </GithubContext.Provider>
