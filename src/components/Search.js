@@ -3,7 +3,41 @@ import styled from 'styled-components';
 import { MdSearch } from 'react-icons/md';
 import { GithubContext } from '../context/context';
 const Search = () => {
-  return <h2>search component</h2>;
+  const [user, setUser] = React.useState(''); // Hook
+  const { requests, error } = React.useContext(GithubContext); // Hook al Main Context
+  // console.log(requests);
+  // Get stuff from Global Context:
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // console.log(user); // Vemos que Tomamos el Value OnChange!
+    if (user) {
+      //Logic
+    }
+  };
+  return (
+    <section className='section'>
+      <Wrapper className='section-center'>
+        {error.show && (
+          <ErrorWrapper>
+            <p>{error.msg}</p>
+          </ErrorWrapper>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className='form-control'>
+            <MdSearch></MdSearch>
+            <input
+              type='text'
+              placeholder='GitHub User'
+              value={user}
+              onChange={(e) => setUser(e.target.value)}
+            />
+            {requests > 0 && <button type='submit'>Search</button>}
+          </div>
+        </form>
+        <h3>Requests: {requests} /60</h3>
+      </Wrapper>
+    </section>
+  );
 };
 
 const Wrapper = styled.div`
