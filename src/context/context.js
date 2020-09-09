@@ -37,12 +37,29 @@ const GithubProvider = ({ children }) => {
       // Repos :  https://api.github.com/users/john-smilga/repos?per_page=100
       // Followers: https://api.github.com/users/john-smilga/followers
       const { login, followers_url } = response.data;
-      axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) =>
-        setRepos(response.data)
-      );
-      axios(`${followers_url}?per_page=100`).then((response) =>
-        setFollowers(response.data)
-      );
+      //  await axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) =>
+      //     setRepos(response.data)
+      //   );
+      //  await axios(`${followers_url}?per_page=100`).then((response) =>
+      //     setFollowers(response.data)
+      //   );
+      // ----------> ALL SETTLED : <--------------------
+      // Esperará a que todo esté en orden y SOLO despues lo mostrará:
+      await Promise.allSettled([
+        axios(`${rootUrl}/users/${login}/repos?per_page=100`), // Esto
+        axios(`${followers_url}?per_page=100`), // Esto
+      ]).then((results) => {
+        // Una vez todo cargado:
+        const [repos, followers] = results; // Destructuramos la data
+        const status = 'fulfilled'; // FULFILLED IMPORTANTISIMO: mostrará si cargó
+        if (repos.status === status) {
+          // Si es fulfilled
+          setRepos(repos.value.data); // Display
+        }
+        if (followers.status === status) {
+          setFollowers(followers.value.data); // Display
+        }
+      });
     } else {
       toggleError(true, 'No such User');
     }
