@@ -10,7 +10,7 @@ Most important features applied:
   - Fusion Charts
   - Authentication by: Auth0
   
-Take a Look --> \
+Take a Look -->\
 
 Website: https://p4-react-githubusers.netlify.app/login
 
