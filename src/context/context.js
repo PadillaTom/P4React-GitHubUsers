@@ -55,6 +55,7 @@ const GithubProvider = ({ children }) => {
         if (repos.status === status) {
           // Si es fulfilled
           setRepos(repos.value.data); // Display
+          console.log(results);
         }
         if (followers.status === status) {
           setFollowers(followers.value.data); // Display
